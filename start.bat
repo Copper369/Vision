@@ -1,18 +1,34 @@
 @echo off
+cd /d "%~dp0"
 echo ========================================
 echo   Drishyamitra - AI Photo Management
 echo ========================================
 echo.
 
-echo [1/4] Checking environment...
+echo [1/5] Checking environment...
 if not exist "backend\.env" (
     echo ERROR: backend\.env not found!
-    echo Please run: copy backend\.env.example backend\.env
+    echo Please run: setup.bat first
     pause
     exit /b 1
 )
 
-echo [2/4] Starting Backend Server...
+echo [2/5] Checking PostgreSQL...
+sc query postgresql-x64-18 | find "RUNNING" >nul
+if %errorlevel% neq 0 (
+    echo ERROR: PostgreSQL is not running!
+    echo.
+    echo Please start PostgreSQL first:
+    echo   1. Run start_postgres.bat as Administrator
+    echo   OR
+    echo   2. Start manually: net start postgresql-x64-18
+    echo.
+    pause
+    exit /b 1
+)
+echo PostgreSQL is running ✓
+
+echo [3/5] Starting Backend Server...
 echo.
 start "Drishyamitra Backend" cmd /k "cd backend && python -m venv venv 2>nul && venv\Scripts\activate && pip install -q -r requirements.txt && echo Backend starting on http://localhost:5000 && python app.py"
 
@@ -20,12 +36,12 @@ echo Waiting for backend to initialize...
 timeout /t 10 /nobreak >nul
 
 echo.
-echo [3/4] Starting Frontend Server...
+echo [4/5] Starting Frontend Server...
 echo.
 start "Drishyamitra Frontend" cmd /k "cd frontend && npm install && echo Frontend starting on http://localhost:3000 && npm run dev"
 
 echo.
-echo [4/4] Done!
+echo [5/5] Done!
 echo.
 echo ========================================
 echo   Application Starting...

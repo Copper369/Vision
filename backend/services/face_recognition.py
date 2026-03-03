@@ -12,13 +12,23 @@ class FaceRecognitionService:
         
         # Try to import DeepFace
         try:
+            # Initialize tensorflow first to avoid __version__ AttributeError
+            import tensorflow as tf
+            # Suppress tensorflow warnings
+            os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+            tf.get_logger().setLevel('ERROR')
+            
             from deepface import DeepFace
             self.DeepFace = DeepFace
             self.deepface_available = True
             print("✅ DeepFace loaded successfully!")
-        except ImportError:
-            print("⚠️  DeepFace not available. Face detection disabled.")
+        except ImportError as e:
+            print(f"⚠️  DeepFace not available. Face detection disabled.")
+            print(f"   Error: {e}")
             print("   Install with: pip install deepface tf-keras")
+        except Exception as e:
+            print(f"⚠️  Error loading DeepFace: {e}")
+            print("   Face detection disabled.")
     
     def detect_and_extract_faces(self, image_path):
         """Detect faces and extract embeddings using DeepFace"""
