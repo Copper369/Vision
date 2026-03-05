@@ -28,6 +28,8 @@ backend/data/photos/*
 !backend/data/photos/.gitkeep
 data/photos/*
 !data/photos/.gitkeep
+Data-shots/*
+!Data-shots/.gitkeep
 
 # API Credentials
 credentials.json
