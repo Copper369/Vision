@@ -29,8 +29,9 @@ RUN mkdir -p data/photos
 # Expose port
 EXPOSE 5000
 
-# Set default PORT if not provided
-ENV PORT=5000
+# Copy startup script
+COPY start.sh /app/start.sh
+RUN chmod +x /app/start.sh
 
-# Run the application with gunicorn for production
-CMD gunicorn --bind 0.0.0.0:$PORT --workers 2 --timeout 120 "app:create_app()"
+# Run the application
+CMD ["/app/start.sh"]
