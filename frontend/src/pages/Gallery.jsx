@@ -38,12 +38,15 @@ function Gallery() {
     setUploading(true)
 
     try {
-      const formData = new FormData()
-      files.forEach(file => formData.append('photos', file))
+      // Upload files one by one since backend expects 'file' not 'photos'
+      for (const file of files) {
+        const formData = new FormData()
+        formData.append('file', file)
 
-      await api.post('/photos/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      })
+        await api.post('/photos/upload', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        })
+      }
 
       showToast(`Successfully uploaded ${files.length} photo${files.length > 1 ? 's' : ''}`, 'success')
       fetchPhotos()
